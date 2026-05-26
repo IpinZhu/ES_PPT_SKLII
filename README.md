@@ -84,3 +84,9 @@ python scripts/build_html_ppt.py presentation.md -t styles/office_extracted.css 
 ```bash
 python scripts/build_html_ppt.py presentation.md -t custom_theme.css -o presentation.html
 ```
+
+---
+
+## 🤖 协作模型 (Collaborating Model)
+
+本项目由 **Antigravity** (Google DeepMind) 参与协作开发，提供 AI 驱动的代码编写与样式设计支持。
