@@ -8,6 +8,8 @@ When generating a slide deck, you must strictly follow these steps:
 ## 1. Content Extraction & Structuring
 Extract the key points from the user's raw text. Break down long paragraphs into short bullet points. Plan the structure: Cover Slide, Table of Contents (TOC) Slide, Content Slides, and a concluding Thanks Slide.
 
+**MANDATORY**: You MUST reserve image placeholders in the content slides. Whenever discussing a concept, system, or result, use `<div class="img-placeholder">Insert image description here</div>` to reserve space for images. Do NOT create text-only presentations.
+
 ## 2. Writing the Markdown Source
 Create a new `.md` file (e.g., `presentation.md`) in the workspace root. Begin with the following Marp frontmatter:
 ```markdown
@@ -17,6 +19,43 @@ theme: office_extracted
 footer: '大工至善 大学至真'
 paginate: true
 ---
+```
+
+## 2.5. Mandatory Templates (Cover & TOC)
+You MUST use the exact HTML structures below for the Cover and TOC slides. Do not invent your own markup for them.
+
+**Cover Slide Template**:
+```html
+<!-- _class: title-slide -->
+<div class="cover-left-banner"></div>
+<img class="cover-logo" src="assets/logo.png" />
+<div class="cover-title-area">
+  <div class="cover-title-p1">主标题</div>
+  <div class="cover-title-p1">副标题</div>
+</div>
+<div class="cover-meta-line"></div>
+<div class="cover-meta-list">
+  <div class="cover-meta-item"><span class="label">汇报人</span>：姓名</div>
+  <div class="cover-meta-item"><span class="label">日期</span>：具体日期</div>
+</div>
+<div class="cover-date">2026年X月</div>
+```
+
+**TOC Slide Template**:
+```html
+---
+
+<!-- _class: toc-slide -->
+<div class="toc-container">
+    <div class="toc-left">
+        目录<br>
+        <span class="en">CONTENTS</span>
+    </div>
+    <ul class="toc-list list-none">
+        <li class="toc-item"><span class="num">01</span> <span class="text">章节名称一</span></li>
+        <li class="toc-item"><span class="num">02</span> <span class="text">章节名称二</span></li>
+    </ul>
+</div>
 ```
 
 ## 3. Applying Layout Components

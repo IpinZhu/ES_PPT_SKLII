@@ -175,6 +175,7 @@ section.title-slide footer { display: none !important; }
     width: 254px;
     height: 254px;
     object-fit: contain;
+    transform: scale(2.2);
     z-index: 2;
 }
 
@@ -222,21 +223,21 @@ section.title-slide footer { display: none !important; }
 .cover-meta-line {
     position: absolute;
     left: 460px;
-    top: 300px;
+    top: 340px;
     width: 3px;
-    height: 210px;
+    height: 120px;
     background-color: #004EA1;
 }
 
 .cover-meta-list {
     position: absolute;
     left: 490px;
-    top: 295px;
+    top: 340px;
     width: 730px;
-    height: 210px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 30px;
     align-items: flex-start;
     padding: 5px 0;
     box-sizing: border-box;
