@@ -30,7 +30,7 @@ section {
     display: flex;
     flex-direction: column;
     
-    background-image: url('logo.png');
+    background-image: url('../assets/logo.png');
     background-position: top 20px right 30px;
     background-repeat: no-repeat;
     background-size: 200px auto;
@@ -98,7 +98,7 @@ section.title-slide {
     justify-content: center;
     align-items: center;
     position: relative;
-    background-image: url('logo.png'), linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4)), url('bg1.png');
+    background-image: url('../assets/logo.png'), linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4)), url('../assets/bg1.png');
     background-position: top 20px right 30px, center, center;
     background-size: 200px auto, cover, cover;
     background-repeat: no-repeat, no-repeat, no-repeat;
@@ -145,7 +145,7 @@ section.title-slide .presenter-info {
 }
 
 section.toc-slide {
-    background-image: url('logo.png'), linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), url('bg1.png');
+    background-image: url('../assets/logo.png'), linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), url('../assets/bg1.png');
     background-position: top 20px right 30px, center, center;
     background-size: 200px auto, cover, cover;
     background-repeat: no-repeat, no-repeat, no-repeat;

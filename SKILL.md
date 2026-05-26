@@ -38,7 +38,7 @@ theme: office_extracted
 
 ## 4. 自动调用编译脚本
 Markdown 文件写入完成后，你**必须**调用你的系统工具（如 `run_command`），在当前目录下执行以下编译命令：
-`python3 build_html_ppt.py <你创建的文件名.md> -o <输出文件名.html>`
+`python scripts/build_html_ppt.py <你创建的文件名.md> -t styles/office_extracted.css -o <输出文件名.html>`
 
 ## 5. 交付结果
 命令执行成功后，告知用户已生成完毕，并提供 `.html` 文件的名称，让他们直接在浏览器中双击打开即可演示。

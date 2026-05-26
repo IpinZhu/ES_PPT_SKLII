@@ -3,7 +3,7 @@ import subprocess
 import argparse
 import sys
 
-def build_ppt(input_md, output_html, theme_css="office_extracted.css"):
+def build_ppt(input_md, output_html, theme_css="styles/office_extracted.css"):
     """
     Template skill for generating HTML PPT from Markdown using Marp.
     """
@@ -35,7 +35,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate HTML PPT using extracted template")
     parser.add_argument("input", help="Input Markdown file")
     parser.add_argument("-o", "--output", help="Output HTML file", default="output.html")
-    parser.add_argument("-t", "--theme", help="CSS Theme file", default="office_extracted.css")
+    parser.add_argument("-t", "--theme", help="CSS Theme file", default="styles/office_extracted.css")
     
     args = parser.parse_args()
     build_ppt(args.input, args.output, args.theme)

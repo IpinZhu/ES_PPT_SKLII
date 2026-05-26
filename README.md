@@ -16,7 +16,7 @@
 
 ## 📦 前置依赖 (Prerequisites)
 
-为了确保核心渲染脚本 `build_html_ppt.py` 能成功运行，您的机器（或 Agent 的运行环境）需要具备：
+为了确保核心渲染脚本 `scripts/build_html_ppt.py` 能成功运行，您的机器（或 Agent 的运行环境）需要具备：
 1. **Node.js** (包含 `npx`)：用于免安装动态调用 `@marp-team/marp-cli`。
 2. **Python 3**：用于运行构建脚本。
 3. **AI 终端执行权限**：如果由 AI 自动运行，确保 AI Agent 有调用本地终端执行命令的能力。
@@ -33,10 +33,10 @@
    ```
    
 2. **核心文件说明**：
-   - `build_html_ppt.py`：核心构建脚本，用于调用 Marp。
-   - `office_extracted.css`：经过精心微调的高级排版样式表。
+   - `scripts/build_html_ppt.py`：核心构建脚本，用于调用 Marp。
+   - `styles/office_extracted.css`：经过精心微调的高级排版样式表。
    - `SKILL.md`：存放给 AI Agent 读取的工作流与系统提示词（System Prompt）。
-   - `logo.png` / `bg1.png`：封面及内容的视觉素材。
+   - `assets/logo.png` / `assets/bg1.png`：封面及内容的视觉素材。
 
 ---
 
@@ -60,7 +60,7 @@
 > **AI (执行流程)**：
 > 1. 读取并构思 PPT 结构。
 > 2. 生成包含 Marp 语法的 Markdown 源码（如 `presentation.md`）。
-> 3. 自动在后台运行命令：`python build_html_ppt.py presentation.md -o presentation.html`。
+> 3. 自动在后台运行命令：`python scripts/build_html_ppt.py presentation.md -t styles/office_extracted.css -o presentation.html`。
 > 4. 回复用户：生成完毕，请打开 HTML。
 
 等待 AI 提示完成后，去目录下双击打开它刚刚生成的 `presentation.html`，即可使用方向键全屏播放！
@@ -73,14 +73,14 @@
 
 **编译 Markdown 为 HTML 幻灯片**：
 ```bash
-python build_html_ppt.py <输入文件.md> -o <输出文件.html>
+python scripts/build_html_ppt.py <输入文件.md> -t styles/office_extracted.css -o <输出文件.html>
 ```
 *例如：*
 ```bash
-python build_html_ppt.py presentation.md -o presentation.html
+python scripts/build_html_ppt.py presentation.md -t styles/office_extracted.css -o presentation.html
 ```
 
 **指定自定义主题**（可选）：
 ```bash
-python build_html_ppt.py presentation.md -o presentation.html -t custom_theme.css
+python scripts/build_html_ppt.py presentation.md -t custom_theme.css -o presentation.html
 ```
