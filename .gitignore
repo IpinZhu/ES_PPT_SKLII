@@ -1,0 +1,11 @@
+# Generated presentations
+*.html
+presentation*.md
+output.html
+
+# Ignore large PDFs or resources not needed for engine itself
+*.pdf
+
+# Python
+__pycache__/
+*.pyc
