@@ -28,7 +28,7 @@ You MUST use the exact HTML structures below for the Cover and TOC slides. Do no
 ```html
 <!-- _class: title-slide -->
 <div class="cover-left-banner"></div>
-<img class="cover-logo" src="assets/logo.png" />
+<img class="cover-logo" src="assets/heu_logo_badge.png" />
 <div class="cover-title-area">
   <div class="cover-title-p1">主标题</div>
   <div class="cover-title-p1">副标题</div>

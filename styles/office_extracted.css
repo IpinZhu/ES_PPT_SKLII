@@ -33,7 +33,7 @@ section {
     overflow: hidden;
     
     background-image: 
-        url('assets/logo.png'),
+        url('assets/heu_logo_color.png'),
         linear-gradient(to right, var(--color-accent-main) 0%, var(--color-accent-main) 100%);
     background-position: 
         top 20px right 30px,
@@ -170,12 +170,11 @@ section.title-slide footer { display: none !important; }
 
 .cover-logo {
     position: absolute;
-    left: 121px;
-    top: 251px;
-    width: 254px;
-    height: 254px;
+    left: 168px;
+    top: 250px;
+    width: 160px;
+    height: 160px;
     object-fit: contain;
-    transform: scale(2.2);
     z-index: 2;
 }
 
@@ -339,14 +338,13 @@ section.thanks-slide footer {
     left: 562px;
     top: 558px;
     width: 380px;
-    height: 72px;
-    object-fit: contain;
+    height: auto;
     z-index: 2;
 }
 
 section.toc-slide {
     background-image: 
-        url('assets/logo.png'), 
+        url('assets/heu_logo_color.png'), 
         linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), 
         url('assets/bg1.png'),
         linear-gradient(to right, var(--color-accent-main) 0%, var(--color-accent-main) 100%);
