@@ -16,8 +16,10 @@ def build_ppt(input_md, output_html, theme_css="styles/office_extracted.css"):
     # We use npx to run marp-cli dynamically without global installation
     # --theme applies our extracted style
     # --html allows raw html if needed
+    # On Windows, we need to run npx.cmd because running npx (which resolves to npx.ps1) is blocked by the execution policy.
+    npx_bin = "npx.cmd" if os.name == "nt" else "npx"
     cmd = [
-        "npx", "--yes", "@marp-team/marp-cli@latest",
+        npx_bin, "--yes", "@marp-team/marp-cli@latest",
         input_md,
         "--theme", theme_css,
         "-o", output_html,
