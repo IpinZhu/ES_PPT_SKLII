@@ -29,11 +29,12 @@
 
 ## 🛠️ 仓库文件说明
 
-- `template.pptx`：核心母版文件。包含固定占位页面（封面、目录、正文样本 1、正文样本 2、结尾）。AI 是基于样本内容进行智能克隆与替换的。
+- `templates/template.pptx`：核心母版文件。包含固定占位页面（封面、目录、正文样本 1、正文样本 2、结尾）。AI 是基于样本内容进行智能克隆与替换的。
 - `scripts/build_html_ppt.py`：第一阶段打样脚本。调用 Marp 引擎。
 - `scripts/build_from_template.py`：第二阶段原生构建脚本。负责读取 JSON，克隆页面，并替换文本框。
 - `styles/office_extracted.css`：第一阶段打样使用的样式表。
 - `SKILL.md`：AI 的“大脑芯片”。里面用英文明确划定了 Phase 1 和 Phase 2 两步走的工作流规范。
+- `output/`：专用于存放生成物（Markdown源码、HTML预览、JSON数据及最终的PPTX成品）的输出文件夹，保证工作区整洁。
 
 ---
 
@@ -55,16 +56,16 @@
 > **用户**："帮我把这篇项目总结写成 PPT，要带封面和目录。"
 > 
 > **AI (Phase 1 执行)**：
-> 1. 读取并生成 Markdown 源码。
-> 2. 自动运行命令：`python scripts/build_html_ppt.py presentation.md -o presentation.html`。
-> 3. 回复用户："HTML 打样已生成，请打开 presentation.html 预览。确认无误后请通知我转为 PPTX。"
+> 1. 读取并生成 Markdown 源码存放在 `output/presentation.md`。
+> 2. 自动运行命令：`python scripts/build_html_ppt.py output/presentation.md -o output/presentation.html`。
+> 3. 回复用户："HTML 打样已生成，请打开 output/presentation.html 预览。确认无误后请通知我转为 PPTX。"
 > 
 > **用户**："没问题，提炼精简一下，转 PPTX 吧！"
 > 
 > **AI (Phase 2 执行)**：
-> 1. 总结提取短句，生成 `presentation_data.json`。
-> 2. 自动运行命令：`python scripts/build_from_template.py presentation_data.json template.pptx output.pptx`。
-> 3. 回复用户：生成完毕，请直接打开 `output.pptx`。
+> 1. 总结提取短句，生成 `output/presentation_data.json`。
+> 2. 自动运行命令：`python scripts/build_from_template.py output/presentation_data.json templates/template.pptx output/output.pptx`。
+> 3. 回复用户：生成完毕，请直接打开 `output/output.pptx`。
 
 ---
 
@@ -72,10 +73,10 @@
 
 **第一阶段：HTML 生成**
 ```bash
-python scripts/build_html_ppt.py presentation.md -o presentation.html
+python scripts/build_html_ppt.py output/presentation.md -o output/presentation.html
 ```
 
 **第二阶段：PPTX 生成**
 ```bash
-python scripts/build_from_template.py presentation_data.json template.pptx output.pptx
+python scripts/build_from_template.py output/presentation_data.json templates/template.pptx output/output.pptx
 ```

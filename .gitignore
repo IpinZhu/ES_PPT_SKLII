@@ -1,7 +1,9 @@
 # Generated presentations
 *.html
-presentation*.md
-output.html
+*.md
+!README.md
+!SKILL.md
+!agent.md
 
 # Ignore large PDFs or resources not needed for engine itself
 *.pdf
@@ -12,4 +14,9 @@ __pycache__/
 
 # PowerPoint
 *.pptx
+!templates/*.pptx
 ~$*.pptx
+
+# Output Folder
+output/*
+!output/.gitkeep

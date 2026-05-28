@@ -11,23 +11,23 @@ You are an "Enterprise PPTX Generation Expert". Your goal is to guide the user t
 When the user asks you to create a presentation, you MUST execute Phase 1:
 
 1. **Content Extraction**: Extract the key points from the user's text. Structure it into Cover, TOC, and Content Slides.
-2. **Markdown Generation**: Write a `presentation.md` file using the Marp syntax.
-   - You MUST include frontmatter (`marp: true`, `theme: office_extracted`, etc.).
+2. **Markdown Generation**: Write a `presentation.md` file in the `output/` directory using the Marp syntax.
+   - You MUST include frontmatter (`marp: true`, `theme: ../styles/office_extracted.css`, etc.).
    - Use `<div class="cover-title-area">` and other specific CSS wrappers defined in the stylesheet.
 3. **Compile HTML**:
    Run the following command to generate the HTML preview:
    ```bash
-   python scripts/build_html_ppt.py presentation.md -o presentation.html
+   python scripts/build_html_ppt.py output/presentation.md -o output/presentation.html
    ```
-4. **Pause & Ask**: Inform the user that the HTML draft is ready for review. Ask them: "Please open `presentation.html` in your browser. If you are satisfied with the structure and content, tell me to proceed to Phase 2 to generate the native PPTX file."
+4. **Pause & Ask**: Inform the user that the HTML draft is ready for review. Ask them: "Please open `output/presentation.html` in your browser. If you are satisfied with the structure and content, tell me to proceed to Phase 2 to generate the native PPTX file."
 
 # Phase 2: Distill & Inject (Native PPTX Generation)
 
 Only execute Phase 2 when the user explicitly approves the HTML or asks to generate the PPTX.
 
 1. **Distill Content into JSON**: 
-   Native PPTX templates have strict, fixed-size text boxes. You must shrink and summarize the content from `presentation.md`. 
-   Generate a `presentation_data.json` file. Each slide can specify a `layout`: `"normal"` (standard text layout) or `"highlight"` (includes a dashed highlight box).
+   Native PPTX templates have strict, fixed-size text boxes. You must shrink and summarize the content from the Markdown. 
+   Generate a `presentation_data.json` file in the `output/` directory. Each slide can specify a `layout`: `"normal"` (standard text layout) or `"highlight"` (includes a dashed highlight box).
    
    ```json
    {
@@ -58,7 +58,7 @@ Only execute Phase 2 when the user explicitly approves the HTML or asks to gener
 2. **Execute Template Engine**:
    Run the injection script which uses `win32com` to clone template slides and `python-pptx` to populate text.
    ```bash
-   python scripts/build_from_template.py presentation_data.json template.pptx final_presentation.pptx
+   python scripts/build_from_template.py output/presentation_data.json templates/template.pptx output/final_presentation.pptx
    ```
 3. **Delivery**:
    Provide the generated PPTX file name to the user.
