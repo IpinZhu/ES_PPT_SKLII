@@ -35,8 +35,8 @@ You MUST use the exact HTML structures below for the Cover and TOC slides. Do no
 </div>
 <div class="cover-meta-line"></div>
 <div class="cover-meta-list">
-  <div class="cover-meta-item"><span class="label">汇报人</span>：姓名</div>
-  <div class="cover-meta-item"><span class="label">日期</span>：具体日期</div>
+  <div class="cover-meta-item" style="display: flex; align-items: flex-start;"><span class="label" style="display: inline-block; width: 86px; text-align-last: justify;">汇报人</span>：姓名</div>
+  <div class="cover-meta-item" style="display: flex; align-items: flex-start;"><span class="label" style="display: inline-block; width: 86px; text-align-last: justify;">日期</span>：具体日期</div>
 </div>
 <div class="cover-date">2026年X月</div>
 ```
@@ -58,6 +58,23 @@ You MUST use the exact HTML structures below for the Cover and TOC slides. Do no
 </div>
 ```
 
+**Thanks Slide Template**:
+```html
+---
+
+<!-- _class: thanks-slide -->
+<svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;">
+  <polygon points="0,0 100,0 180,360 100,720 0,720" fill="#004EA1" />
+  <polygon points="768,0 1043,0 1043,137 905.5,248 768,137" fill="#004EA1" />
+  <polygon points="1130,720 1280,720 1280,570" fill="#004EA1" />
+</svg>
+<div class="thanks-content">
+    <div class="thanks-bg-text">THANK YOU</div>
+    <div class="thanks-title">谢谢大家</div>
+    <img class="thanks-school-img" src="assets/heu_signature.png" />
+</div>
+```
+
 ## 3. Applying Layout Components
 Do not write plain paragraphs. You must leverage the pre-defined layout classes in the stylesheet:
 - **Full-height container (Mandatory outer wrapper for content slides)**:
@@ -76,8 +93,11 @@ Do not write plain paragraphs. You must leverage the pre-defined layout classes 
 Once the markdown source is saved, execute the build command to generate the HTML slide deck:
 `python scripts/build_html_ppt.py <filename.md> -o <output.html>`
 
+If the user specifically requests an **editable PPTX** file (or a native PowerPoint format instead of HTML), use the new python-pptx script:
+`python scripts/build_editable_pptx.py <filename.md> <output.pptx>`
+
 ## 5. Visual Verification & Delivery
-Verify the compilation output. Provide the generated HTML file name to the user for local browser preview.
+Verify the compilation output. Provide the generated file name (HTML or PPTX) to the user for local preview or editing.
 
 ---
 
@@ -93,10 +113,10 @@ To ensure high-fidelity presentation rendering across different viewports withou
 ### B. Hanging Flag Cover Design (Slide 1 Spec)
 - The cover page uses the `<!-- _class: title-slide -->` directive to clear default background patterns and footers.
 - **Left Hanging Banner**: An absolute-positioned banner `.cover-left-banner` (`left: 100px; width: 295px; height: 720px;` in `#004EA1` deep blue) with a V-shape bottom clip-path (`clip-path: polygon(0 0, 100% 0, 100% 90%, 50% 100%, 0 90%)`).
-- **Centered Emblem**: The university logo `.cover-logo` is positioned in the lower-middle of the flag banner (`left: 121px; top: 251px; width: 254px; height: 254px;`).
+- **Centered Emblem**: The university logo `.cover-logo` is positioned in the lower-middle of the flag banner (`left: 128px; top: 220px; width: 240px; height: 240px;`).
 - **Centered Right Content Column**:
   - **Main Title**: `.cover-title-area` spans the remaining space (`left: 395px; top: 60px; width: 885px; height: 180px;`) and centers text horizontally (`align-items: center; text-align: center;`). The title lines use `font-size: 54px; font-weight: 900; line-height: 1.3; letter-spacing: 2px;` for a full, bold look.
-  - **Meta Information Block**: Separated by `.cover-meta-line` (`top: 300px; left: 460px; width: 3px; height: 210px;`). The info list `.cover-meta-list` is positioned at `top: 295px; left: 490px; width: 730px; height: 210px;`.
+  - **Meta Information Block**: Separated by `.cover-meta-line` (`top: 340px; left: 700px; width: 3px; height: 120px;`). The info list `.cover-meta-list` is positioned at `top: 340px; left: 730px; width: 730px;`.
   - **Date**: Centered at the bottom `.cover-date` (`top: 575px; left: 395px; width: 885px; font-size: 28px;`).
 
 ### C. Geometric Thanks Slide Design (Slide 10 Spec)
@@ -126,3 +146,6 @@ Follow these rules to ensure the slides compile flawlessly without rendering lea
 6. **Windows CLI Execution**:
    - On Windows shells, always call `npx.cmd` instead of `npx` to bypass local PowerShell execution policy blocks, and pass `--no-stdin` to prevent conversion processes from hanging indefinitely.
      `python scripts/build_html_ppt.py <input.md> -o <output.html>`
+7. **Always Use Dash-Border Placeholders for Diagrams**:
+   - Unless explicitly instructed with specific local high-res image files to render, do NOT write `<img src="xxx">` tags that point to dummy/web/placeholder paths.
+   - **Best Practice**: Always use `<div class="img-placeholder">Description of the figure</div>` to render clean, dotted-border placeholders that the user can manually fill in post-generation.

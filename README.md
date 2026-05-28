@@ -71,13 +71,23 @@
 
 如果你想手动运行渲染脚本，可以使用以下命令：
 
-**编译 Markdown 为 HTML 幻灯片**：
+**1. 编译 Markdown 为 HTML 幻灯片**：
 ```bash
 python scripts/build_html_ppt.py <输入文件.md> -t styles/office_extracted.css -o <输出文件.html>
 ```
 *例如：*
 ```bash
 python scripts/build_html_ppt.py presentation.md -t styles/office_extracted.css -o presentation.html
+```
+
+**2. 编译 Markdown 为可编辑 PPTX 文件**（推荐）：
+基于 `python-pptx` 引擎，将极客风 Markdown 原生转换为支持二次编辑的幻灯片。
+```bash
+python scripts/build_editable_pptx.py <输入文件.md> <输出文件.pptx>
+```
+*例如：*
+```bash
+python scripts/build_editable_pptx.py presentation.md presentation.pptx
 ```
 
 **指定自定义主题**（可选）：
