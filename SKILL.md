@@ -13,6 +13,7 @@ When the user asks you to create a presentation, you MUST execute Phase 1:
 1. **Content Extraction**: Extract the key points from the user's text. Structure it into Cover, TOC, and Content Slides.
 2. **Markdown Generation**: Write a `presentation.md` file in the `output/` directory using the Marp syntax.
    - You MUST include frontmatter (`marp: true`, `theme: ../styles/office_extracted.css`, etc.).
+   - **You MUST add `math: katex` to the frontmatter** so that LaTeX formulas (`$...$` inline, `$$...$$` block) render as proper math via Marp's built-in KaTeX engine. Whenever the source contains physics, math, or engineering equations, write them as LaTeX rather than plain text — never degrade `\tau_{hydro}`, `\rho`, subscripts, fractions, or matrices into ASCII.
    - Follow the detailed **Mandatory Templates & Layout Specifications** below.
 3. **Compile HTML**:
    Run the following command to generate the HTML preview:
@@ -93,19 +94,21 @@ Do not write plain paragraphs. You must leverage the pre-defined layout classes 
 
 Only execute Phase 2 when the user explicitly approves the HTML or asks to generate the PPTX.
 
-1. **Distill Content into JSON**: 
-   Native PPTX templates have strict, fixed-size text boxes. You must shrink and summarize the content from the Markdown. 
+1. **Distill Content into JSON**:
+   Native PPTX templates have strict, fixed-size text boxes. You must shrink and summarize the content from the Markdown.
    Generate a `presentation_data.json` file in the `output/` directory. Each slide can specify a `layout`: `"normal"` (standard text layout) or `"highlight"` (includes a dashed highlight box).
-   
+
    ```json
    {
      "cover": {
        "title": "Short Title",
        "subtitle": "Subtitle",
        "reporter": "Name",
+       "instructor": "Advisor",
+       "major": "Major",
        "date": "2026年5月"
      },
-     "toc": ["Chapter 1", "Chapter 2"],
+     "toc": ["Chapter 1", "Chapter 2", "Chapter 3"],
      "slides": [
        {
          "layout": "normal",
@@ -118,18 +121,59 @@ Only execute Phase 2 when the user explicitly approves the HTML or asks to gener
          "title": "Chapter 2",
          "subtitle": "➢ Highlight Box",
          "bullets": ["Highlighted detail 1"],
+         "highlight": "One-line emphasis text",
          "image": "assets/some_image.png"
        }
      ]
    }
    ```
-2. **Execute Template Engine**:
-   Run the injection script which uses `win32com` to clone template slides and `python-pptx` to populate text.
+
+   **TOC capacity:** the bundled `templates/template.pptx` ships with **3 TOC entry placeholders** (texts `"01"` and `"项目背景介绍"`). Keep `toc` to 3 items; if more chapters are needed, group them or extend the template separately.
+
+2. **Pick the Right Template Engine for the Host OS**:
+   Two interchangeable injection scripts are provided. They take the same arguments and produce the same PPTX shape — pick by environment.
+
+   | Script | Requires | Use when |
+   |---|---|---|
+   | `scripts/build_from_template.py` | Windows + installed Microsoft PowerPoint + `pywin32` | You are running on a Windows host with PowerPoint. Uses `win32com.client` to clone slides via the real PowerPoint engine. |
+   | `scripts/build_pptx_linux.py` | `python-pptx`, `lxml` (no PowerPoint, no `pywin32`) | You are running on Linux/macOS, in a sandbox (e.g. Cowork, Docker, CI), or anywhere PowerPoint is unavailable. Uses pure OPC manipulation to clone slide parts. |
+
+   **Auto-detect rule:** if `os.name != "nt"` or PowerPoint isn't installed, you MUST use `build_pptx_linux.py`. Never attempt `build_from_template.py` outside Windows — it will fail at `import win32com.client`.
+
    ```bash
-   python scripts/build_from_template.py output/presentation_data.json templates/template.pptx output/final_presentation.pptx
+   # Windows + PowerPoint
+   python scripts/build_from_template.py output/presentation_data.json templates/template.pptx output/output.pptx
+
+   # Linux / macOS / sandbox / CI
+   python scripts/build_pptx_linux.py    output/presentation_data.json templates/template.pptx output/output.pptx
    ```
+
+   Both scripts:
+   - Clone slide 3 (normal-layout template) and slide 4 (highlight-layout template) once per JSON entry, in document order.
+   - Move every clone to the slot just before the original "thanks" slide so final order is `[cover, toc, ...content..., thanks]`.
+   - Drop the two original template pages once cloning is done.
+   - Fill cover, TOC, and content text frames via `python-pptx`, preserving each frame's first-paragraph `pPr` and first-run `rPr` (font, color, size).
+
 3. **Delivery**:
-   Provide the generated PPTX file name to the user.
+   Provide the generated PPTX file name to the user. The file is fully editable in PowerPoint / WPS / Keynote — no `win32com` traces are baked in even when the Linux engine produced it.
+
+## Phase 2 Bullet & Title Mapping (so the engines can find your text)
+
+Both injection scripts pattern-match on the literal placeholder strings in `templates/template.pptx`. Do **not** rename these placeholders in the template, and do **not** alter your JSON keys; otherwise text will not be filled.
+
+| JSON field | Template placeholder text | Notes |
+|---|---|---|
+| `cover.title` + `cover.subtitle` | `大大大大标题\x0b子标题` (two lines in a single text frame) | Linux engine inserts an `<a:br/>` between the two lines. |
+| `cover.reporter` / `instructor` / `major` | `申 请 人 ：…` block | Linux engine writes 4 lines: `汇 报 人 / 指导老师 / 专 业 / 日 期`. |
+| `cover.date` | `2025年5月` text box | Replaced as a single line. |
+| `toc[i]` (number) | `01` (3 occurrences) | Replaced with `01`, `02`, `03`. |
+| `toc[i]` (title) | `项目背景介绍` (3 occurrences) | Replaced in document order. |
+| `slides[i].title` | `01 项目背景介绍` (text frame heading) | The chapter title at top-left of each content slide. |
+| `slides[i].subtitle` | `➢ 核心痛点分析` | The arrow-prefixed subtitle below the title. |
+| `slides[i].bullets` | `现有方案的局限性较高\n…` | One paragraph per bullet, joined by `\n`. |
+| `slides[i].highlight` | `*HIGHLIGHT…` (highlight layout only) | Single-line emphasis inside the dashed box. |
+
+
 
 ---
 
@@ -150,3 +194,17 @@ Follow these rules to ensure the slides compile flawlessly without rendering lea
 5. **Phase isolation**: Do NOT generate JSON or run the PPTX script during Phase 1. Wait for the user's explicit command.
 6. **JSON Length Limits**: Ensure bullet points are concise (max 3 lines) to prevent text overflow in the fixed-size native template.
 7. **Asset Relative Paths**: Always ensure `assets/` paths resolve correctly depending on your working directory (e.g., if outputting to `output/`, point image paths to `../assets/`).
+8. **LaTeX / Math Rendering**:
+   - The Marp frontmatter MUST contain `math: katex` whenever the deck has any equation. Without it, `$...$` and `$$...$$` are output as raw text and subscripts/Greek letters become unreadable.
+   - Inline math uses single `$ ... $`; display math uses `$$ ... $$` on its own lines (a blank line before and after the block is fine — those blank lines are between Markdown blocks, NOT inside HTML containers, so rule #1 still holds).
+   - When wrapping a formula inside a `<div class="text-box-solid">` or `<div class="text-box">`, keep the math on a single line using `$ ... $` (inline) or place a single `$$ ... $$` block on its own line inside the div with no surrounding blank lines.
+   - Prefer LaTeX for any non-trivial physics expression. Do NOT pre-render formulas to ASCII (e.g. `tau_hydro`, `rho*g*V`). Always write `\tau_{hydro}`, `\rho g V_{sub}`, etc.
+   - For matrices, use `\begin{bmatrix} ... \end{bmatrix}` inside `$$ ... $$`. Keep matrices small (≤3×3) on slides; reference larger structures in prose instead.
+9. **PPTX Formula Rendering (Phase 2 → OMML)**:
+   - Both `presentation_data.json` text fields (`bullets`, `highlight`, `subtitle`, `title`, `cover.title/subtitle`) keep math written as inline LaTeX `$...$`. Do NOT downgrade them to ASCII just because they go into a PPTX — the engines now handle math natively.
+   - `scripts/build_pptx_linux.py` scans each text segment, splits it into text / math chunks on `$ ... $`, converts every math chunk via `latex2mathml → mathml2omml` and inserts the result as a native `<a14:m><m:oMath>...</m:oMath></a14:m>` block inside the paragraph. Plain-text segments stay as `<a:r>` runs and inherit the original font (`rPr`).
+   - After saving, the script post-processes each slide XML to hoist `xmlns:a14` and `xmlns:m` declarations from every `<a14:m>` element up to the root `<p:sld>`, so PowerPoint / WPS / Keynote treat the equations as first-class editable formulas instead of inline plain-text fallbacks.
+   - Required dependencies on the host that runs Phase 2 (already declared in README): `pip install python-pptx lxml latex2mathml mathml2omml`. `latex2mathml` and `mathml2omml` are pure-Python and ship no native binaries.
+   - Display-style fractions (`\dfrac`), Greek letters, subscripts, superscripts, square roots, big operators (`\sum`), absolute values (`|\cdot|`), `\cdot`, `\circ`, `\arctan2`, `\arcsin`, `\propto` are all supported and round-trip correctly.
+   - Only single-line `$...$` (inline-style) is supported in the JSON. `$$...$$` block math is NOT parsed by the JSON ingestion path — break long display equations into one or two `$...$` segments per bullet, or place them in a `highlight` field.
+   - `scripts/build_from_template.py` (Windows + PowerPoint engine) does NOT yet do the LaTeX→OMML conversion — it relies on PowerPoint's manual equation editor at runtime. If you need cross-platform parity, prefer the Linux engine on Windows too (it works there as well).
