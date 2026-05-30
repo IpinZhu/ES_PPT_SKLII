@@ -20,11 +20,18 @@
 为了确保核心脚本能成功运行，您的机器需要具备：
 1. **Node.js** (包含 `npx`)：用于在第一阶段将 Markdown 渲染为 HTML。
 2. **Python 3**：用于运行核心数据填充脚本。
-3. **Windows 系统与 Microsoft PowerPoint**：底层的 PPTX 页面克隆模块依赖 `win32com.client` 调用本地的 PowerPoint 程序进行无损复制。
+3. **PPTX 生成引擎（二选一，按平台）**：
+   - **Windows + Microsoft PowerPoint**：使用 `scripts/build_from_template.py`，依赖 `win32com.client` 调用本地 PowerPoint 进行无损克隆（仓库默认路径）。
+   - **Linux / macOS / 沙箱 / CI**：使用 `scripts/build_pptx_linux.py`，纯 `python-pptx` + `lxml` 实现，无需 PowerPoint，也不需要 `pywin32`。
 4. **Python 依赖包**：
-   
+
    ```bash
-   pip install python-pptx pywin32
+   # 通用依赖
+   pip install python-pptx lxml
+   # PPTX 内原生公式渲染（LaTeX → OMML）
+   pip install latex2mathml mathml2omml
+   # 仅 Windows 路径需要：
+   pip install pywin32
    ```
 
 ---
@@ -80,7 +87,11 @@ python scripts/build_html_ppt.py output/presentation.md -o output/presentation.h
 **第二阶段：PPTX 生成**
 
 ```bash
+# Windows + PowerPoint
 python scripts/build_from_template.py output/presentation_data.json templates/template.pptx output/output.pptx
+
+# Linux / macOS / 沙箱（无 PowerPoint）
+python scripts/build_pptx_linux.py    output/presentation_data.json templates/template.pptx output/output.pptx
 ```
 
 ------
